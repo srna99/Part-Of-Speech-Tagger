@@ -32,6 +32,7 @@ train_content = []
 with open(train_pos, 'r', encoding="utf-8-sig") as file:
     train_content.extend(file.read().split())
 
+prev_pos = "."
 for term in train_content:
     if term == '[' or term == ']':
         continue
@@ -39,7 +40,7 @@ for term in train_content:
         parts = term.rsplit('/', 1)
 
         word = parts[0]
-        pos = parts[1]
+        pos = parts[1].split('|')[0]
 
         if word in word_pos_dict.keys():
             if pos in word_pos_dict[word]:
@@ -48,6 +49,23 @@ for term in train_content:
                 word_pos_dict[word][pos] = 1
         else:
             word_pos_dict[word] = {pos: 1}
+
+        if pos in pos_dict:
+            pos_dict[pos] += 1
+        else:
+            pos_dict[pos] = 1
+
+        if prev_pos in pos_pos_dict.keys():
+            if pos in pos_pos_dict[prev_pos]:
+                pos_pos_dict[prev_pos][pos] += 1
+            else:
+                pos_pos_dict[prev_pos][pos] = 1
+        else:
+            pos_pos_dict[prev_pos] = {pos: 1}
+
+        prev_pos = pos
+
+
 
 
 
