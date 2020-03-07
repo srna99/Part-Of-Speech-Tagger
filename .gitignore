@@ -137,3 +137,6 @@ dmypy.json
 .idea/.gitignore
 .idea/vcs.xml
 .idea/**/profiles_settings.xml
+
+output
+.DS_Store
