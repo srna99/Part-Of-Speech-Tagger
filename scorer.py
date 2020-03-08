@@ -61,6 +61,19 @@ for tag1 in all_tags:
         else:
             confusion_matrix[tag1] = {tag2: 0}
 
+most_tag = ''
+most_count = 0
+for i in range(len(tags_key)):
+    actual_tag = tags_key[i]
+    predicted_tag = tags_test[i]
+
+    confusion_matrix[actual_tag][predicted_tag] += 1
+
+    if confusion_matrix[actual_tag][predicted_tag] > most_count and \
+            actual_tag == predicted_tag:
+        most_tag = actual_tag
+        most_count = confusion_matrix[actual_tag][predicted_tag]
+
 # correct_count = 0
 # for ind, term in enumerate(test_key_content):
 #     if term == test_tagged_content[ind] or term == '[' or term == ']':
@@ -68,4 +81,3 @@ for tag1 in all_tags:
 #
 # accuracy = correct_count / len(test_key_content)
 # print(accuracy)
-
