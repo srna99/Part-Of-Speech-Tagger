@@ -24,9 +24,6 @@ test_key_content = []
 tags_test = []
 tags_key = []
 
-all_tags = set()
-confusion_matrix = {}
-
 baseline_accuracy = 0
 accuracy = 0
 
@@ -52,14 +49,10 @@ with open(test_key, 'r', encoding="utf-8-sig") as file:
 separate_tags(test_tagged_content, tags_test)
 separate_tags(test_key_content, tags_key)
 
-all_tags.update(set(tags_key))
+all_tags = set(tags_key)
+tag_dict = dict(zip(all_tags, range(len(all_tags))))
 
-for tag1 in all_tags:
-    for tag2 in all_tags:
-        if tag1 in confusion_matrix.keys():
-            confusion_matrix[tag1][tag2] = 0
-        else:
-            confusion_matrix[tag1] = {tag2: 0}
+confusion_matrix = [[0] * len(all_tags) for _ in range(len(all_tags))]
 
 most_tag = ''
 most_count = 0
@@ -68,12 +61,14 @@ for i in range(len(tags_key)):
     actual_tag = tags_key[i]
     predicted_tag = tags_test[i]
 
-    confusion_matrix[actual_tag][predicted_tag] += 1
+    confusion_matrix[tag_dict[actual_tag]][tag_dict[predicted_tag]] += 1
 
     if actual_tag == predicted_tag:
-        if confusion_matrix[actual_tag][predicted_tag] > most_count:
+        if confusion_matrix[tag_dict[actual_tag]][tag_dict[predicted_tag]] > \
+                most_count:
             most_tag = actual_tag
-            most_count = confusion_matrix[actual_tag][predicted_tag]
+            most_count = confusion_matrix[tag_dict[actual_tag]][tag_dict[
+                predicted_tag]]
 
         total_correct += 1
 
@@ -82,5 +77,17 @@ accuracy = round(total_correct / len(tags_key), 2)
 
 print("Baseline Accuracy:", baseline_accuracy)
 print("Overall Accuracy:", accuracy)
-print("\n", confusion_matrix)
 
+ordered_tags = [''] * len(all_tags)
+for tag, num in tag_dict.items():
+    ordered_tags[num] = tag
+
+for i in range(len(ordered_tags)):
+    if i == 0:
+        print("\n     ", end='')
+    print(format(ordered_tags[i], '>4'), end=' ')
+
+for i in range(len(all_tags)):
+    print("\n", format(ordered_tags[i], '4'), end='')
+    for j in range(len(all_tags)):
+        print(format(confusion_matrix[i][j], '4'), end=' ')
